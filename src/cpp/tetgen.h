@@ -120,26 +120,20 @@ public:
   //   number of sides (edges).  The points of the polygon must be given in
   //   either counterclockwise or clockwise order and they form a ring, so 
   //   every two consecutive points forms an edge of the polygon.
-  struct polygon {
+  typedef struct {
     int *vertexlist;
     int numberofvertices;
-
-    polygon();
-   ~polygon();
-  };
+  } polygon;
 
   // A "facet" describes a polygonal region possibly with holes, edges, and 
   //   points floating in it.  Each facet consists of a list of polygons and
   //   a list of hole points (which lie strictly inside holes).
-  struct facet{
+  typedef struct {
     polygon *polygonlist;
     int numberofpolygons;
     REAL *holelist;
     int numberofholes;
-
-    facet();
-    ~facet();
-  };
+  } facet;
 
   // A "voroedge" is an edge of the Voronoi diagram. It corresponds to a
   //   Delaunay face.  Each voroedge is either a line segment connecting
@@ -508,6 +502,19 @@ public:
     }
 
     if (facetlist != (facet *) NULL) {
+      facet *f;
+      polygon *p;
+      for (i = 0; i < numberoffacets; i++) {
+        f = &facetlist[i];
+        for (j = 0; j < f->numberofpolygons; j++) {
+          p = &f->polygonlist[j];
+          delete [] p->vertexlist;
+        }
+        delete [] f->polygonlist;
+        if (f->holelist != (REAL *) NULL) {
+          delete [] f->holelist;
+        }
+      }
       delete [] facetlist;
     }
     if (facetmarkerlist != (int *) NULL) {
@@ -791,14 +798,11 @@ public:
 //                                                                           //
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace predicates {
-  void exactinit(int, int, int, REAL, REAL, REAL);
-  void exactdeinit();
-  REAL orient3d(REAL *pa, REAL *pb, REAL *pc, REAL *pd);
-  REAL insphere(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL *pe);
-  REAL orient4d(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL *pe,
-                REAL ah, REAL bh, REAL ch, REAL dh, REAL eh);
-}
+void exactinit(int, int, int, REAL, REAL, REAL);
+REAL orient3d(REAL *pa, REAL *pb, REAL *pc, REAL *pd);
+REAL insphere(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL *pe);
+REAL orient4d(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL *pe,
+              REAL ah, REAL bh, REAL ch, REAL dh, REAL eh);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                           //

@@ -55,22 +55,22 @@ jobs:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
 
-  deploy:
-    needs: [build_sdist, build_wheels]
-    runs-on: ubuntu-latest
-    name: Deploy
-    if: github.event_name == 'release' && github.event.action == 'created'
-    steps:
-      - uses: actions/checkout@v4
-      - name: download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: cibw-*
-          path: dist
-          merge-multiple: true
+  #deploy:
+  #  needs: [build_sdist, build_wheels]
+  #  runs-on: ubuntu-latest
+  #  name: Deploy
+  #  if: github.event_name == 'release' && github.event.action == 'created'
+  #  steps:
+  #    - uses: actions/checkout@v4
+  #    - name: download artifacts
+  #      uses: actions/download-artifact@v4
+  #      with:
+  #        pattern: cibw-*
+  #        path: dist
+  #        merge-multiple: true
 
-      - name: deploy
-        uses: pypa/gh-action-pypi-publish@v1.12.2
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+  #    - name: deploy
+  #      uses: pypa/gh-action-pypi-publish@v1.12.2
+  #      with:
+  #        user: __token__
+ #        password: ${{ secrets.PYPI_API_TOKEN }}
